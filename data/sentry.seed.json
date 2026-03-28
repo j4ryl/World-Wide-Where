@@ -1,0 +1,28 @@
+{
+  "alerts": [
+    {
+      "id": "preflight-switzerland-singapore",
+      "status": "action_needed",
+      "scope": "prebooking",
+      "origin": "Singapore",
+      "destination": "Switzerland",
+      "title": "Flight price dropped for your planned Switzerland trip",
+      "summary": "A public fare watch found a lower Singapore to Zurich price than the last snapshot. This is the kind of alert you would want before booking.",
+      "trigger": "Observed public fares are about CHF 110 lower than the last saved snapshot across direct and aggregator checks.",
+      "suggestedAction": "Open the latest fare comparison and book while the lower fare is still visible.",
+      "holdWindow": "Best booked within the next 6 hours"
+    },
+    {
+      "id": "trip-watch-switzerland-weather",
+      "status": "drafted",
+      "scope": "postplanning",
+      "origin": "Singapore",
+      "destination": "Switzerland",
+      "title": "Weather risk detected for a mountain stop",
+      "summary": "A cached sentry scenario shows how the app would warn about poor mountain visibility and suggest a reorder.",
+      "trigger": "Heavy cloud and wind risk on the planned high-altitude stop day.",
+      "suggestedAction": "Move the valley and cafe stop earlier, then shift the mountain viewpoint to the clearest weather window.",
+      "holdWindow": "Recheck again 12 hours before departure"
+    }
+  ]
+}

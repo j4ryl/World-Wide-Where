@@ -1,0 +1,431 @@
+{
+  "destinations": [
+    {
+      "id": "switzerland-bernese-oberland",
+      "region": "switzerland",
+      "match": [
+        "switzerland",
+        "interlaken",
+        "grindelwald",
+        "lauterbrunnen",
+        "bernese oberland",
+        "jungfrau",
+        "lucerne",
+        "zermatt"
+      ],
+      "samplePrompt": "Plan a 3-day Switzerland trip with scenic trains, a reliable mountain route, a quiet cafe, and one local warning.",
+      "cards": [
+        {
+          "id": "flight-zrh-swiss",
+          "bucket": "flights",
+          "title": "SWISS flights into Zurich",
+          "summary": "Good base option for a Switzerland trip because Zurich Airport has the easiest rail connections into the Alps.",
+          "trustTag": "Verified Partner",
+          "trustSummary": "Based on public carrier pages and airport access links.",
+          "verificationState": "verified",
+          "sourceLabel": "SWISS + Zurich Airport",
+          "recommendedDurationMinutes": 90,
+          "priceSummary": {
+            "touristPrice": "Typical fares vary by season",
+            "localPrice": "Open-jaw fares can be cheaper if you fly into Zurich and out of Geneva"
+          },
+          "coords": {
+            "lat": 47.4581,
+            "lng": 8.5555
+          },
+          "warnings": [
+            "Budget fares often exclude checked bags and seat selection."
+          ],
+          "quotes": [
+            "Zurich Airport is the simplest rail-linked arrival point for central Switzerland."
+          ],
+          "openingHours": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+              ],
+              "open": "04:30",
+              "close": "23:30"
+            }
+          ],
+          "bookingLink": "https://www.swiss.com/",
+          "provenance": [
+            {
+              "label": "SWISS",
+              "url": "https://www.swiss.com/",
+              "kind": "official",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Used for flight browsing and public booking handoff."
+            }
+          ]
+        },
+        {
+          "id": "hotel-interlaken",
+          "bucket": "hotels",
+          "title": "Hotel Interlaken",
+          "summary": "Central base near Interlaken Ost if you want easy train access without driving every day.",
+          "trustTag": "Official Stay",
+          "trustSummary": "Based on the official hotel site and Switzerland Tourism listings.",
+          "verificationState": "verified",
+          "sourceLabel": "Official hotel site",
+          "recommendedDurationMinutes": 720,
+          "priceSummary": {
+            "touristPrice": "Rooms often start around CHF 240 in peak months",
+            "localPrice": "Midweek stays outside school holidays are usually cheaper"
+          },
+          "coords": {
+            "lat": 46.6863,
+            "lng": 7.8632
+          },
+          "warnings": [
+            "Peak summer weekends book out early."
+          ],
+          "quotes": [
+            "Best fit if you want to keep trains and mountain lifts simple."
+          ],
+          "bookingLink": "https://www.hotelinterlaken.ch/en/",
+          "provenance": [
+            {
+              "label": "Hotel Interlaken",
+              "url": "https://www.hotelinterlaken.ch/en/",
+              "kind": "official",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Room rates and location"
+            }
+          ]
+        },
+        {
+          "id": "hotel-glacier-grindelwald",
+          "bucket": "hotels",
+          "title": "Boutique Hotel Glacier in Grindelwald",
+          "summary": "Higher-end stay if you want mountain views and quick access to Grindelwald Terminal.",
+          "trustTag": "Official Stay",
+          "trustSummary": "Official site details matched with tourism listings.",
+          "verificationState": "verified",
+          "sourceLabel": "Official hotel site",
+          "recommendedDurationMinutes": 720,
+          "priceSummary": {
+            "touristPrice": "Rooms often start around CHF 320",
+            "localPrice": "Short shoulder-season stays can be lower"
+          },
+          "coords": {
+            "lat": 46.6246,
+            "lng": 8.0415
+          },
+          "warnings": [
+            "This is less convenient if you plan to spend most nights in Interlaken."
+          ],
+          "quotes": [
+            "A better splurge pick than a base for constant day trips."
+          ],
+          "bookingLink": "https://www.hotel-glacier.ch/en/",
+          "provenance": [
+            {
+              "label": "Boutique Hotel Glacier",
+              "url": "https://www.hotel-glacier.ch/en/",
+              "kind": "official",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Hotel details"
+            }
+          ]
+        },
+        {
+          "id": "car-europcar-interlaken",
+          "bucket": "car-rental",
+          "title": "Europcar pick-up near Interlaken",
+          "summary": "Useful if you want flexibility for valley stops, but trains are usually easier for the classic mountain route.",
+          "trustTag": "Verified Partner",
+          "trustSummary": "Official rental site plus local driving advice for Swiss alpine routes.",
+          "verificationState": "verified",
+          "sourceLabel": "Europcar Switzerland",
+          "recommendedDurationMinutes": 45,
+          "priceSummary": {
+            "touristPrice": "Small cars often start near CHF 95 per day",
+            "localPrice": "Winter AWD upgrades are worth paying for in snowy weeks"
+          },
+          "coords": {
+            "lat": 46.6903,
+            "lng": 7.8691
+          },
+          "warnings": [
+            "Some mountain villages have limited parking and high garage fees."
+          ],
+          "quotes": [
+            "Great for flexible valley drives, not always the fastest choice for peak tourist routes."
+          ],
+          "bookingLink": "https://www.europcar.ch/en-ch",
+          "provenance": [
+            {
+              "label": "Europcar Switzerland",
+              "url": "https://www.europcar.ch/en-ch",
+              "kind": "partner",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Rates and pickup information"
+            }
+          ]
+        },
+        {
+          "id": "transport-sbb-interlaken",
+          "bucket": "local-transport",
+          "title": "SBB rail links to Interlaken and Lauterbrunnen",
+          "summary": "The most reliable backbone for a Bernese Oberland itinerary. Easy transfers and frequent service throughout the day.",
+          "trustTag": "Official Schedule",
+          "trustSummary": "Based on official SBB rail pages and station information.",
+          "verificationState": "verified",
+          "sourceLabel": "SBB",
+          "recommendedDurationMinutes": 75,
+          "priceSummary": {
+            "touristPrice": "Point-to-point fares can add up quickly",
+            "localPrice": "Saver Day Pass deals can make multi-stop days cheaper"
+          },
+          "coords": {
+            "lat": 46.6903,
+            "lng": 7.8691
+          },
+          "warnings": [
+            "Mountain connections can run less frequently in bad weather or shoulder season."
+          ],
+          "quotes": [
+            "Use Interlaken Ost as the anchor for train-heavy trip planning."
+          ],
+          "openingHours": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+              ],
+              "open": "05:00",
+              "close": "23:30"
+            }
+          ],
+          "bookingLink": "https://www.sbb.ch/en",
+          "provenance": [
+            {
+              "label": "SBB official timetable",
+              "url": "https://www.sbb.ch/en",
+              "kind": "official",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Rail timings and booking"
+            }
+          ]
+        },
+        {
+          "id": "transport-harder-kulm",
+          "bucket": "local-transport",
+          "title": "Harder Kulm funicular from Interlaken",
+          "summary": "Short scenic lift for an easy viewpoint if you want a mountain moment without a full-day excursion.",
+          "trustTag": "Official Schedule",
+          "trustSummary": "Based on official Jungfrau pages.",
+          "verificationState": "verified",
+          "sourceLabel": "Jungfrau",
+          "recommendedDurationMinutes": 120,
+          "priceSummary": {
+            "touristPrice": "Round trips are often around CHF 38",
+            "localPrice": "Regional passes can lower the effective cost"
+          },
+          "coords": {
+            "lat": 46.6991,
+            "lng": 7.8526
+          },
+          "warnings": [
+            "The last descent time matters. Do not plan this too late in the day."
+          ],
+          "quotes": [
+            "One of the easiest scenic add-ons if the weather is clear."
+          ],
+          "openingHours": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+              ],
+              "open": "09:10",
+              "close": "21:10"
+            }
+          ],
+          "bookingLink": "https://www.jungfrau.ch/en-gb/harder-kulm/",
+          "provenance": [
+            {
+              "label": "Jungfrau official page",
+              "url": "https://www.jungfrau.ch/en-gb/harder-kulm/",
+              "kind": "official",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Seasonal hours and ticket info"
+            }
+          ]
+        },
+        {
+          "id": "food-iseltwald-cafe",
+          "bucket": "food-hidden-gems",
+          "title": "Quiet cafe stop in Iseltwald",
+          "summary": "A calmer lakeside stop than the busiest Interlaken cafes if you want a slower afternoon.",
+          "trustTag": "Hidden Gem",
+          "trustSummary": "Suggested from local-style travel discussions and guide pages, then checked for location and opening details.",
+          "verificationState": "cached",
+          "sourceLabel": "Local guides",
+          "recommendedDurationMinutes": 75,
+          "priceSummary": {
+            "touristPrice": "Coffee and cake usually land in the CHF 12-18 range",
+            "localPrice": "Village bakeries are often cheaper than lakefront tourist terraces"
+          },
+          "coords": {
+            "lat": 46.7119,
+            "lng": 7.9648
+          },
+          "warnings": [
+            "Some smaller spots close early outside summer."
+          ],
+          "quotes": [
+            "Good reset stop if Interlaken feels too busy."
+          ],
+          "openingHours": [
+            {
+              "days": [
+                "mon",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+              ],
+              "open": "10:00",
+              "close": "17:30"
+            }
+          ],
+          "provenance": [
+            {
+              "label": "MySwitzerland food guide",
+              "url": "https://www.myswitzerland.com/en-us/experiences/food-wine/",
+              "kind": "guide",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Regional food inspiration"
+            }
+          ]
+        },
+        {
+          "id": "food-lauterbrunnen-lunch",
+          "bucket": "food-hidden-gems",
+          "title": "Traditional lunch stop in Lauterbrunnen",
+          "summary": "Simple Swiss lunch option that fits well between train legs and valley walks.",
+          "trustTag": "Local Tip",
+          "trustSummary": "Cross-checked guide listings with mapped opening times.",
+          "verificationState": "cached",
+          "sourceLabel": "Guide + maps",
+          "recommendedDurationMinutes": 90,
+          "priceSummary": {
+            "touristPrice": "Lunch mains often start around CHF 24",
+            "localPrice": "Set lunch specials can be noticeably cheaper"
+          },
+          "coords": {
+            "lat": 46.5930,
+            "lng": 7.9080
+          },
+          "warnings": [
+            "Kitchen hours can end earlier than the full closing time."
+          ],
+          "quotes": [
+            "A practical food stop rather than a splurge restaurant."
+          ],
+          "openingHours": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+              ],
+              "open": "11:30",
+              "close": "20:00"
+            }
+          ],
+          "provenance": [
+            {
+              "label": "Regional guide listing",
+              "url": "https://www.myswitzerland.com/en-us/",
+              "kind": "guide",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Dining inspiration"
+            }
+          ]
+        },
+        {
+          "id": "advice-weather",
+          "bucket": "local-advice",
+          "title": "Mountain weather changes fast",
+          "summary": "Keep the highest-altitude stop flexible because wind and low cloud can cancel the payoff even when valley weather looks fine.",
+          "trustTag": "Local Advice",
+          "trustSummary": "Repeated across local travel discussions and official mountain transport pages.",
+          "verificationState": "verified",
+          "sourceLabel": "Official + local discussion",
+          "recommendedDurationMinutes": 15,
+          "warnings": [
+            "Book the clearest weather window for mountain viewpoints, not the other way around."
+          ],
+          "quotes": [
+            "Clear morning conditions often beat a late afternoon gamble."
+          ],
+          "provenance": [
+            {
+              "label": "Jungfrau weather guidance",
+              "url": "https://www.jungfrau.ch/en-gb/",
+              "kind": "official",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Weather and route conditions"
+            },
+            {
+              "label": "Swiss local travel discussions",
+              "url": "https://www.reddit.com/r/askswitzerland/",
+              "kind": "forum",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Seasonal advice"
+            }
+          ]
+        },
+        {
+          "id": "advice-sunday-closures",
+          "bucket": "local-advice",
+          "title": "Expect Sunday closures in smaller towns",
+          "summary": "Village shops and some smaller cafes can close on Sundays, so keep snacks and backup food plans in mind.",
+          "trustTag": "Local Advice",
+          "trustSummary": "Common local planning tip for Switzerland day trips.",
+          "verificationState": "verified",
+          "sourceLabel": "Local planning advice",
+          "recommendedDurationMinutes": 15,
+          "warnings": [
+            "Do not assume every village stop has a late lunch option."
+          ],
+          "quotes": [
+            "Sundays feel quieter in smaller Swiss towns, especially outside peak season."
+          ],
+          "provenance": [
+            {
+              "label": "Swiss local travel discussions",
+              "url": "https://www.reddit.com/r/askswitzerland/",
+              "kind": "forum",
+              "lastChecked": "2026-03-27T00:00:00.000Z",
+              "note": "Local expectations"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+[
+  {
+    "id": "sbb-official",
+    "bucket": "local-transport",
+    "label": "SBB official timetable",
+    "domain": "sbb.ch",
+    "url": "https://www.sbb.ch/en",
+    "kind": "official",
+    "region": "switzerland",
+    "requiresBrowser": false
+  },
+  {
+    "id": "jungfrau-official",
+    "bucket": "local-transport",
+    "label": "Jungfrau mountain transport",
+    "domain": "jungfrau.ch",
+    "url": "https://www.jungfrau.ch/en-gb/",
+    "kind": "official",
+    "region": "switzerland",
+    "requiresBrowser": false
+  },
+  {
+    "id": "myswiss-hotels",
+    "bucket": "hotels",
+    "label": "Switzerland Tourism stays",
+    "domain": "myswitzerland.com",
+    "url": "https://www.myswitzerland.com/en-us/accommodations/",
+    "kind": "official",
+    "region": "switzerland",
+    "requiresBrowser": false
+  },
+  {
+    "id": "europcar-ch",
+    "bucket": "car-rental",
+    "label": "Europcar Switzerland",
+    "domain": "europcar.ch",
+    "url": "https://www.europcar.ch/en-ch",
+    "kind": "partner",
+    "region": "switzerland",
+    "requiresBrowser": false
+  },
+  {
+    "id": "swiss-forums",
+    "bucket": "local-advice",
+    "label": "Swiss local travel discussions",
+    "platform": "Reddit",
+    "domain": "reddit.com",
+    "url": "https://www.reddit.com/r/askswitzerland/",
+    "kind": "forum",
+    "region": "switzerland",
+    "requiresBrowser": true,
+    "loginRequired": false,
+    "credibilityGoal": "Look for repeated local warnings that align with official route or business-hour advice."
+  },
+  {
+    "id": "quiet-cafes",
+    "bucket": "food-hidden-gems",
+    "label": "Local cafe recommendations",
+    "platform": "Switzerland Tourism",
+    "domain": "myswitzerland.com",
+    "url": "https://www.myswitzerland.com/en-us/experiences/food-wine/",
+    "kind": "guide",
+    "region": "switzerland",
+    "requiresBrowser": true,
+    "loginRequired": false,
+    "credibilityGoal": "Find quieter food stops and cafe neighborhoods that are plausible for a real itinerary."
+  },
+  {
+    "id": "facebook-switzerland",
+    "bucket": "local-advice",
+    "label": "Facebook travel communities for Switzerland",
+    "platform": "Facebook",
+    "domain": "facebook.com",
+    "url": "https://www.facebook.com/",
+    "kind": "social",
+    "region": "switzerland",
+    "requiresBrowser": true,
+    "loginRequired": true,
+    "credibilityGoal": "Find repeated local recommendations or warnings, not one-off hype."
+  },
+  {
+    "id": "google-flights",
+    "bucket": "flights",
+    "label": "Google Flights public fares",
+    "platform": "Google Flights",
+    "domain": "google.com",
+    "url": "https://www.google.com/travel/flights",
+    "kind": "guide",
+    "region": "switzerland",
+    "requiresBrowser": true,
+    "loginRequired": false,
+    "credibilityGoal": "Capture visible public fares without relying on sponsored ordering."
+  },
+  {
+    "id": "skyscanner-flights",
+    "bucket": "flights",
+    "label": "Skyscanner public comparison",
+    "platform": "Skyscanner",
+    "domain": "skyscanner.com",
+    "url": "https://www.skyscanner.com/",
+    "kind": "guide",
+    "region": "switzerland",
+    "requiresBrowser": true,
+    "loginRequired": false,
+    "credibilityGoal": "Capture aggregator fare snapshots and note when the route is ad-heavy or unclear."
+  },
+  {
+    "id": "kayak-flights",
+    "bucket": "flights",
+    "label": "Kayak public flight comparison",
+    "platform": "Kayak",
+    "domain": "kayak.com",
+    "url": "https://www.kayak.com/flights",
+    "kind": "guide",
+    "region": "switzerland",
+    "requiresBrowser": true,
+    "loginRequired": false,
+    "credibilityGoal": "Compare public fare spreads across aggregators and direct booking options."
+  },
+  {
+    "id": "swiss-direct-flights",
+    "bucket": "flights",
+    "label": "SWISS direct booking",
+    "platform": "SWISS",
+    "domain": "swiss.com",
+    "url": "https://www.swiss.com/",
+    "kind": "official",
+    "region": "switzerland",
+    "requiresBrowser": true,
+    "loginRequired": false,
+    "credibilityGoal": "Anchor the public direct-booking price so aggregators can be compared against something concrete."
+  }
+]
