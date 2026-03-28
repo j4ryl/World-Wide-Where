@@ -269,6 +269,8 @@ export const runStreamMessageSchema = z.object({
 export const runExpandRequestSchema = z.object({
   buckets: z.array(bucketSchema).min(1),
   selectedCardIds: z.array(z.string()).default([]),
+  flightPreferences: flightPreferencesSchema.optional(),
+  hotelPreferences: hotelPreferencesSchema.optional(),
 });
 
 export const timelineNodeSchema = z.object({
@@ -402,6 +404,7 @@ export type ExtractionJob = z.infer<typeof extractionJobSchema>;
 export type ExtractionResult = z.infer<typeof extractionResultSchema>;
 export type FlightPreferences = z.infer<typeof flightPreferencesSchema>;
 export type HotelPreferences = z.infer<typeof hotelPreferencesSchema>;
+export type RunExpandRequest = z.infer<typeof runExpandRequestSchema>;
 export type OfferGroup = z.infer<typeof offerGroupSchema>;
 export type RunEvent = z.infer<typeof runEventSchema>;
 export type RunStreamMessage = z.infer<typeof runStreamMessageSchema>;

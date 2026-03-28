@@ -201,6 +201,25 @@ function buildLegacyGooglePlacePhotoUrl(photoReference: string) {
   return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photo_reference=${encodeURIComponent(photoReference)}&key=${encodeURIComponent(config.GOOGLE_PLACES_API_KEY)}`;
 }
 
+function isGooglePlacePhotoUrl(url: string) {
+  try {
+    const parsed = new URL(url);
+    const hostname = parsed.hostname.toLowerCase();
+
+    return (
+      hostname === "maps.googleapis.com" ||
+      hostname === "places.googleapis.com" ||
+      hostname.endsWith(".googleusercontent.com")
+    );
+  } catch {
+    return false;
+  }
+}
+
+function buildImageProxyUrl(imageUrl: string) {
+  return `${config.API_PUBLIC_BASE_URL}/api/image-proxy?src=${encodeURIComponent(imageUrl)}`;
+}
+
 async function fetchGooglePlacePhotoUri(photoName: string) {
   if (!config.GOOGLE_PLACES_API_KEY) {
     return null;
@@ -390,7 +409,9 @@ async function resolveCardImageUrls(card: DiscoveryCard) {
   const googlePlaceImages = await searchGooglePlaceImageUrls(card);
 
   if (googlePlaceImages.length > 0) {
-    return googlePlaceImages;
+    return googlePlaceImages.map((imageUrl) =>
+      isGooglePlacePhotoUrl(imageUrl) ? buildImageProxyUrl(imageUrl) : imageUrl,
+    );
   }
 
   const candidatePages = [

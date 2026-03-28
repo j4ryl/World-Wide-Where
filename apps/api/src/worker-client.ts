@@ -53,6 +53,15 @@ async function fallbackExtraction(jobs: ExtractionJob[]): Promise<ExtractionResu
   return Promise.all(
     jobs.map(async (job, index) => {
       await new Promise((resolve) => setTimeout(resolve, 120 + index * 40));
+      const seed = [...`${job.platform ?? ""}:${job.domain}:${job.bucket}`].reduce(
+        (sum, char) => sum + char.charCodeAt(0),
+        0,
+      );
+      const flightBaseFare = 108 + (seed % 9) * 11;
+      const checkedBagPrice = 26 + (seed % 4) * 6;
+      const totalFare = flightBaseFare + checkedBagPrice + (9 + (seed % 3) * 4) + 8;
+      const hotelNightlyRate = 168 + (seed % 7) * 18;
+      const hotelTotalStayPrice = hotelNightlyRate * 3 + 24 + (seed % 3) * 12;
 
       return {
         jobId: job.id,
@@ -67,17 +76,17 @@ async function fallbackExtraction(jobs: ExtractionJob[]): Promise<ExtractionResu
           job.bucket === "flights"
             ? [
                 "Visible public fare snapshot collected.",
-                "Base fare: SGD 118",
-                "Estimated total with requested extras: SGD 162",
+                `Base fare: SGD ${flightBaseFare}`,
+                `Estimated total with requested extras: SGD ${totalFare}`,
                 "Sponsored ordering may still affect the page.",
               ]
             : job.bucket === "hotels"
               ? [
-                  "Nightly rate: SGD 214",
-                  "Total stay price: SGD 642",
-                  "Free cancellation: Yes",
-                  "Breakfast included: Yes",
-                  "Pay later: Yes",
+                  `Nightly rate: SGD ${hotelNightlyRate}`,
+                  `Total stay price: SGD ${hotelTotalStayPrice}`,
+                  `Free cancellation: ${seed % 3 !== 0 ? "Yes" : "No"}`,
+                  `Breakfast included: ${seed % 2 === 0 ? "Yes" : "No"}`,
+                  `Pay later: ${seed % 4 !== 0 ? "Yes" : "No"}`,
                 ]
             : ["Browser fallback collected a concise detail summary."],
         flightObservation:
@@ -86,10 +95,10 @@ async function fallbackExtraction(jobs: ExtractionJob[]): Promise<ExtractionResu
                 airline: job.platform ?? "Public fare source",
                 seller: job.platform ?? job.domain,
                 route: job.promptHint,
-                baseFare: "SGD 118",
-                totalFare: "SGD 162",
+                baseFare: `SGD ${flightBaseFare}`,
+                totalFare: `SGD ${totalFare}`,
                 baggagePolicy: "Cabin bag included; checked bag extra",
-                checkedBagPrice: "SGD 32",
+                checkedBagPrice: `SGD ${checkedBagPrice}`,
                 boardingPolicy: "Priority boarding extra",
                 mealPolicy: "Meal extra",
                 fareClass: "Economy Light",
@@ -102,11 +111,11 @@ async function fallbackExtraction(jobs: ExtractionJob[]): Promise<ExtractionResu
           job.bucket === "hotels"
             ? {
                 propertyName: job.platform ?? "Hotel stay option",
-                nightlyRate: "SGD 214",
-                totalStayPrice: "SGD 642",
-                breakfastIncluded: true,
-                freeCancellation: true,
-                payLaterAvailable: true,
+                nightlyRate: `SGD ${hotelNightlyRate}`,
+                totalStayPrice: `SGD ${hotelTotalStayPrice}`,
+                breakfastIncluded: seed % 2 === 0,
+                freeCancellation: seed % 3 !== 0,
+                payLaterAvailable: seed % 4 !== 0,
                 neighborhood: "Central district",
                 cancellationPolicy: "Free cancellation before the final cancellation window.",
                 roomType: "Deluxe room",

@@ -7,6 +7,7 @@ import type {
   DiscoveryRunSnapshot,
   FlightPreferences,
   FlightWatchDemoResult,
+  HotelPreferences,
   RunStreamMessage,
 } from "@planit/shared-schema";
 import {
@@ -77,6 +78,18 @@ function ensureFlightPreferences(value: DiscoverRequest, patch: Partial<FlightPr
     sellerPreference: value.flightPreferences?.sellerPreference ?? "direct_preferred",
     ...patch,
   } satisfies FlightPreferences;
+}
+
+function ensureHotelPreferences(value: DiscoverRequest, patch: Partial<HotelPreferences>) {
+  return {
+    freeCancellation: value.hotelPreferences?.freeCancellation ?? "preferred",
+    breakfast: value.hotelPreferences?.breakfast ?? "preferred",
+    payment: value.hotelPreferences?.payment ?? "pay_later_preferred",
+    style: value.hotelPreferences?.style ?? "balanced",
+    areaPreference: value.hotelPreferences?.areaPreference ?? "",
+    starPreference: value.hotelPreferences?.starPreference ?? "three_plus",
+    ...patch,
+  } satisfies HotelPreferences;
 }
 
 function bucketLabel(bucket: DiscoveryCard["bucket"]) {
@@ -280,7 +293,6 @@ export default function App() {
   const [flightWatches, setFlightWatches] = useState<Record<string, FlightWatchDemoResult>>({});
   const [flightBudget, setFlightBudget] = useState(480);
   const [hotelBudget, setHotelBudget] = useState(220);
-  const [hotelStyle, setHotelStyle] = useState<"calm" | "central" | "design">("central");
   const [isEditingTripDetails, setIsEditingTripDetails] = useState(false);
   const [hasConfirmedPlaces, setHasConfirmedPlaces] = useState(false);
   const [requestedExpansions, setRequestedExpansions] = useState<Record<string, boolean>>({});
@@ -576,6 +588,28 @@ export default function App() {
     };
   }, [isRunInProgress, latestLiveEvent?.label, latestLiveEvent?.liveUrl]);
 
+  const flightLiveAction = useMemo(() => {
+    if (currentStep !== "flights" || !latestLiveEvent?.liveUrl) {
+      return undefined;
+    }
+
+    return {
+      href: latestLiveEvent.liveUrl,
+      label: `Watch TinyFish live${latestLiveEvent.label ? `: ${latestLiveEvent.label}` : ""}`,
+    };
+  }, [currentStep, latestLiveEvent?.label, latestLiveEvent?.liveUrl]);
+
+  const hotelLiveAction = useMemo(() => {
+    if (currentStep !== "hotels" || !latestLiveEvent?.liveUrl) {
+      return undefined;
+    }
+
+    return {
+      href: latestLiveEvent.liveUrl,
+      label: `Watch TinyFish live${latestLiveEvent.label ? `: ${latestLiveEvent.label}` : ""}`,
+    };
+  }, [currentStep, latestLiveEvent?.label, latestLiveEvent?.liveUrl]);
+
   useEffect(() => {
     if (selectedPlaces.length < minimumPinnedPlaces) {
       setHasConfirmedPlaces(false);
@@ -598,6 +632,7 @@ export default function App() {
       runId,
       buckets: ["flights"],
       selectedCardIds: selectedPlaceIds,
+      flightPreferences: request.flightPreferences,
     });
   }, [
     currentStep,
@@ -605,6 +640,7 @@ export default function App() {
     flightCards.length,
     hasUnlockedFlights,
     requestedExpansions,
+    request.flightPreferences,
     run,
     runId,
     selectedPlaceIds,
@@ -626,12 +662,14 @@ export default function App() {
       runId,
       buckets: ["hotels"],
       selectedCardIds: [...selectedPlaceIds, ...selectedFlightIds],
+      hotelPreferences: request.hotelPreferences,
     });
   }, [
     currentStep,
     expandRunMutation,
     hotelCards.length,
     requestedExpansions,
+    request.hotelPreferences,
     run,
     runId,
     selectedFlightIds,
@@ -673,30 +711,7 @@ export default function App() {
     requestAnimationFrame(() => {
       node.scrollIntoView({ behavior: "smooth", block: "end" });
     });
-  }, [latestHelperEvent?.id, latestHelperEvent?.body, currentStep, run?.status, selectedCardIds.length, timelineNodes.length, errorMessage]);
-
-  useEffect(() => {
-    if (!isRunCompleted) {
-      return;
-    }
-
-    const target =
-      currentStep === "flights"
-        ? flightsPanelRef.current
-        : currentStep === "hotels"
-          ? hotelsPanelRef.current
-          : currentStep === "schedule"
-            ? schedulePanelRef.current
-            : null;
-
-    if (!target) {
-      return;
-    }
-
-    requestAnimationFrame(() => {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  }, [currentStep, isRunCompleted]);
+  }, [latestHelperEvent?.id, latestHelperEvent?.body, run?.status, errorMessage]);
 
   function handleBuildSchedule() {
     if (!selectedCardIds.length) {
@@ -934,7 +949,7 @@ export default function App() {
           />
         ) : null}
 
-        {run && hasUnlockedFlights && currentStep === "flights" ? (
+        {run && hasUnlockedFlights && currentStep === "flights" && (flightCards.length > 0 || !isRunInProgress) ? (
           <div ref={flightsPanelRef}>
             <HybridGlassboxPanel
               phaseLabel="Flights"
@@ -1011,10 +1026,11 @@ export default function App() {
                       });
                       setFlightWatches((current) => ({ ...current, [card.id]: result }));
                     }}
-                  selectedPlaceCount={selectedPlaces.length}
-                  flightBudget={flightBudget}
-                  flightPreferences={request.flightPreferences}
-                  isComplete={isRunCompleted}
+                    selectedPlaceCount={selectedPlaces.length}
+                    flightBudget={flightBudget}
+                    flightPreferences={request.flightPreferences}
+                    isComplete={isRunCompleted}
+                    liveAction={flightLiveAction}
                 />
               </div>
             }
@@ -1022,7 +1038,7 @@ export default function App() {
           </div>
         ) : null}
 
-        {run && hasUnlockedFlights && currentStep === "hotels" ? (
+        {run && hasUnlockedFlights && currentStep === "hotels" && (hotelCards.length > 0 || !isRunInProgress) ? (
           <div ref={hotelsPanelRef}>
             <HybridGlassboxPanel
               phaseLabel="Stay"
@@ -1064,9 +1080,108 @@ export default function App() {
                       <div className="rounded-2xl border border-slate-200 bg-white p-4">
                         <p className="text-sm font-semibold text-slate-900">Hotel style</p>
                         <div className="mt-3 flex flex-wrap gap-2">
-                          <ChoiceButton label="Calm base" active={hotelStyle === "calm"} onClick={() => setHotelStyle("calm")} />
-                          <ChoiceButton label="Central" active={hotelStyle === "central"} onClick={() => setHotelStyle("central")} />
-                          <ChoiceButton label="Design-led" active={hotelStyle === "design"} onClick={() => setHotelStyle("design")} />
+                          <ChoiceButton
+                            label="Cheapest"
+                            active={(request.hotelPreferences?.style ?? "balanced") === "cheapest"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { style: "cheapest" }),
+                              }))
+                            }
+                          />
+                          <ChoiceButton
+                            label="Balanced"
+                            active={(request.hotelPreferences?.style ?? "balanced") === "balanced"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { style: "balanced" }),
+                              }))
+                            }
+                          />
+                          <ChoiceButton
+                            label="Upscale"
+                            active={(request.hotelPreferences?.style ?? "balanced") === "upscale"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { style: "upscale" }),
+                              }))
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                        <p className="text-sm font-semibold text-slate-900">Free cancellation</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <ChoiceButton
+                            label="Required"
+                            active={(request.hotelPreferences?.freeCancellation ?? "preferred") === "required"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { freeCancellation: "required" }),
+                              }))
+                            }
+                          />
+                          <ChoiceButton
+                            label="Preferred"
+                            active={(request.hotelPreferences?.freeCancellation ?? "preferred") === "preferred"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { freeCancellation: "preferred" }),
+                              }))
+                            }
+                          />
+                          <ChoiceButton
+                            label="Not needed"
+                            active={(request.hotelPreferences?.freeCancellation ?? "preferred") === "not_needed"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { freeCancellation: "not_needed" }),
+                              }))
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                        <p className="text-sm font-semibold text-slate-900">Breakfast</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <ChoiceButton
+                            label="Required"
+                            active={(request.hotelPreferences?.breakfast ?? "preferred") === "required"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { breakfast: "required" }),
+                              }))
+                            }
+                          />
+                          <ChoiceButton
+                            label="Preferred"
+                            active={(request.hotelPreferences?.breakfast ?? "preferred") === "preferred"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { breakfast: "preferred" }),
+                              }))
+                            }
+                          />
+                          <ChoiceButton
+                            label="Skip it"
+                            active={(request.hotelPreferences?.breakfast ?? "preferred") === "not_needed"}
+                            onClick={() =>
+                              setRequest((current) => ({
+                                ...current,
+                                hotelPreferences: ensureHotelPreferences(current, { breakfast: "not_needed" }),
+                              }))
+                            }
+                          />
                         </div>
                       </div>
                     </div>
@@ -1085,6 +1200,7 @@ export default function App() {
                     flightBudget={flightBudget}
                     flightPreferences={request.flightPreferences}
                     isComplete={isRunCompleted}
+                    liveAction={hotelLiveAction}
                   />
 
                   {localAdviceCards.length ? <LocalAdvicePanel cards={localAdviceCards} /> : null}

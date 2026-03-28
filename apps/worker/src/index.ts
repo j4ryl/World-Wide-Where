@@ -51,6 +51,11 @@ const tinyfishSseEventSchema = z
   })
   .passthrough();
 
+type TinyfishSseEnvelope = {
+  eventType?: string;
+  payload: z.infer<typeof tinyfishSseEventSchema>;
+};
+
 const workerStreamEventSchema = z.object({
   type: z.enum(["started", "progress", "live_url", "completed", "fallback", "error"]),
   jobId: z.string(),
@@ -185,12 +190,51 @@ function hostnameMatches(allowedHostname: string, candidateUrl?: string) {
   }
 }
 
+function parseTinyfishSseChunk(chunk: string): TinyfishSseEnvelope | null {
+  const lines = chunk.split("\n");
+  const eventType = lines
+    .find((line) => line.startsWith("event:"))
+    ?.replace(/^event:\s*/, "")
+    .trim();
+  const dataText = lines
+    .filter((line) => line.startsWith("data:"))
+    .map((line) => line.replace(/^data:\s*/, ""))
+    .join("\n")
+    .trim();
+
+  if (!dataText) {
+    return null;
+  }
+
+  let decoded: unknown;
+
+  try {
+    decoded = JSON.parse(dataText);
+  } catch {
+    return null;
+  }
+
+  const parsed = tinyfishSseEventSchema.safeParse(decoded);
+
+  if (!parsed.success) {
+    return null;
+  }
+
+  return {
+    eventType,
+    payload: parsed.data,
+  };
+}
+
 function toWorkerStreamEvent(
   job: ExtractionJob,
-  event: z.infer<typeof tinyfishSseEventSchema>,
+  event: TinyfishSseEnvelope,
 ): z.infer<typeof workerStreamEventSchema>[] {
-  const providerStatus = event.status?.toUpperCase();
-  const liveUrl = event.browser_stream_url ?? event.stream_url ?? event.browser_url;
+  const providerStatus = (event.eventType ?? event.payload.status ?? "").toUpperCase() || undefined;
+  const liveUrl =
+    providerStatus === "STREAMING_URL"
+      ? event.payload.browser_stream_url ?? event.payload.stream_url ?? event.payload.browser_url ?? event.payload.url
+      : event.payload.browser_stream_url ?? event.payload.stream_url ?? event.payload.browser_url;
   const events: z.infer<typeof workerStreamEventSchema>[] = [];
 
   if (providerStatus === "STARTED") {
@@ -233,7 +277,7 @@ function toWorkerStreamEvent(
         providerStatus,
         liveUrl,
         message:
-          event.message?.trim() ||
+          event.payload.message?.trim() ||
           `Still checking ${job.platform ?? job.domain} in the browser.`,
       }),
     );
@@ -280,7 +324,7 @@ async function runTinyFishSse(
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
-  let latestEvent: z.infer<typeof tinyfishSseEventSchema> | null = null;
+  let latestEvent: TinyfishSseEnvelope | null = null;
 
   try {
     while (true) {
@@ -295,31 +339,26 @@ async function runTinyFishSse(
       buffer = chunks.pop() ?? "";
 
       for (const chunk of chunks) {
-        const dataLine = chunk
-          .split("\n")
-          .find((line) => line.startsWith("data:"))
-          ?.replace(/^data:\s*/, "");
+        const parsed = parseTinyfishSseChunk(chunk);
 
-        if (!dataLine) {
+        if (!parsed) {
           continue;
         }
 
-        const parsed = tinyfishSseEventSchema.safeParse(JSON.parse(dataLine));
+        latestEvent = parsed;
 
-        if (!parsed.success) {
-          continue;
-        }
-
-        latestEvent = parsed.data;
-
-        for (const normalizedEvent of toWorkerStreamEvent(job, parsed.data)) {
+        for (const normalizedEvent of toWorkerStreamEvent(job, parsed)) {
           onEvent?.(normalizedEvent);
         }
 
-        if (
-          !hostnameMatches(job.domain, parsed.data.current_url) ||
-          !hostnameMatches(job.domain, parsed.data.url)
-        ) {
+        const providerStatus = (parsed.eventType ?? parsed.payload.status ?? "").toUpperCase();
+        const shouldSkipDriftCheckForUrl = providerStatus === "STREAMING_URL";
+
+        if (!hostnameMatches(job.domain, parsed.payload.current_url)) {
+          throw new Error("TinyFish navigation drifted outside the allowed domain.");
+        }
+
+        if (!shouldSkipDriftCheckForUrl && !hostnameMatches(job.domain, parsed.payload.url)) {
           throw new Error("TinyFish navigation drifted outside the allowed domain.");
         }
       }
@@ -336,8 +375,8 @@ async function runTinyFishSse(
   return latestEvent;
 }
 
-function summarizeTinyFishRun(job: ExtractionJob, run: z.infer<typeof tinyfishSseEventSchema>): ExtractionResult {
-  const resultBody = run.final_result ?? run.result ?? run.message;
+function summarizeTinyFishRun(job: ExtractionJob, run: TinyfishSseEnvelope): ExtractionResult {
+  const resultBody = run.payload.final_result ?? run.payload.result ?? run.payload.message;
   const flattened = flattenResult(resultBody).slice(0, 6);
   const primary = flattened[0] ?? `Finished checking ${job.domain}.`;
   const flightObservation = job.bucket === "flights" ? extractFlightObservation(resultBody) : undefined;
@@ -441,9 +480,13 @@ async function executeJobStreaming(
         cardId: job.cardId,
         domain: job.domain,
         platform: job.platform,
-        providerStatus: completedRun.status?.toUpperCase() ?? "COMPLETED",
+        providerStatus: (completedRun.eventType ?? completedRun.payload.status ?? "COMPLETED").toUpperCase(),
         message: `Finished checking ${job.platform ?? job.domain}.`,
-        liveUrl: completedRun.browser_stream_url ?? completedRun.stream_url ?? completedRun.browser_url,
+        liveUrl:
+          completedRun.payload.browser_stream_url ??
+          completedRun.payload.stream_url ??
+          completedRun.payload.browser_url ??
+          ((completedRun.eventType ?? "").toUpperCase() === "STREAMING_URL" ? completedRun.payload.url : undefined),
         result,
       }),
     );

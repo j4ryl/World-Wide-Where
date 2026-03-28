@@ -79,6 +79,16 @@ class RunsStore {
     this.persist();
   }
 
+  patchRequest(runId: string, patch: Partial<DiscoverRequest>) {
+    const run = this.mustGet(runId);
+    run.request = {
+      ...run.request,
+      ...patch,
+    };
+    run.updatedAt = new Date().toISOString();
+    this.persist();
+  }
+
   upsertCards(runId: string, incomingCards: DiscoveryCard[]) {
     const run = this.mustGet(runId);
     const cardsById = new Map(run.cards.map((card) => [card.id, card] as const));

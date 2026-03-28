@@ -10,6 +10,8 @@ dotenv.config({ path: path.join(rootDir, ".env") });
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
+  API_PUBLIC_BASE_URL: z.string().url().optional(),
+  VITE_API_BASE_URL: z.string().url().optional(),
   WORKER_BASE_URL: z.string().url().default("http://localhost:3001"),
   PUBLIC_APP_URL: z.string().url().default("http://localhost:5173"),
   DISCOVERY_MODE: z.enum(["hybrid", "live", "cache"]).default("hybrid"),
@@ -25,5 +27,11 @@ const envSchema = z.object({
   GOOGLE_PLACES_API_KEY: z.string().optional(),
 });
 
-export const config = envSchema.parse(process.env);
+const parsedEnv = envSchema.parse(process.env);
+
+export const config = {
+  ...parsedEnv,
+  API_PUBLIC_BASE_URL:
+    parsedEnv.API_PUBLIC_BASE_URL ?? parsedEnv.VITE_API_BASE_URL ?? `http://localhost:${parsedEnv.PORT}`,
+};
 export { rootDir };

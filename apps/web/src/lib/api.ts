@@ -3,6 +3,8 @@ import type {
   DiscoverRequest,
   DiscoveryRunSnapshot,
   FlightWatchDemoResult,
+  HotelPreferences,
+  RunExpandRequest,
   RunStreamMessage,
   SentryAlert,
   SentryScope,
@@ -38,12 +40,20 @@ export function fetchRun(runId: string) {
   return request<DiscoveryRunSnapshot>(`/api/runs/${runId}`);
 }
 
-export function expandRun(input: { runId: string; buckets: string[]; selectedCardIds?: string[] }) {
+export function expandRun(input: {
+  runId: string;
+  buckets: RunExpandRequest["buckets"];
+  selectedCardIds?: string[];
+  flightPreferences?: DiscoverRequest["flightPreferences"];
+  hotelPreferences?: HotelPreferences;
+}) {
   return request<{ runId: string; buckets: string[] }>(`/api/runs/${input.runId}/expand`, {
     method: "POST",
     body: JSON.stringify({
       buckets: input.buckets,
       selectedCardIds: input.selectedCardIds ?? [],
+      flightPreferences: input.flightPreferences,
+      hotelPreferences: input.hotelPreferences,
     }),
   });
 }

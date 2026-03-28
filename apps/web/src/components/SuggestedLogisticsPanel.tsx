@@ -137,6 +137,10 @@ type SuggestedLogisticsPanelProps = {
   flightBudget?: number;
   flightPreferences?: FlightPreferences;
   isComplete?: boolean;
+  liveAction?: {
+    href: string;
+    label: string;
+  };
 };
 
 const panelCopy = {
@@ -179,6 +183,7 @@ export function SuggestedLogisticsPanel({
   flightBudget,
   flightPreferences,
   isComplete = false,
+  liveAction,
 }: SuggestedLogisticsPanelProps) {
   const center = centroid(selectedPlaceCards);
   const copy = panelCopy[mode];
@@ -251,6 +256,16 @@ export function SuggestedLogisticsPanel({
           <p className="text-sm font-semibold text-slate-900">{statusCopy.label}</p>
         </div>
         <p className="mt-1 text-sm leading-6 text-slate-600">{statusCopy.body}</p>
+        {liveAction ? (
+          <a
+            href={liveAction.href}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-flex items-center rounded-full bg-slate-950 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+          >
+            {liveAction.label}
+          </a>
+        ) : null}
       </div>
 
       {topSuggestion ? (

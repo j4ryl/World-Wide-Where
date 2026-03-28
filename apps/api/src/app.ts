@@ -55,6 +55,10 @@ export async function handleExpandRun(runId: string, body: unknown) {
   }
 
   const request = runExpandRequestSchema.parse(body);
+  runsStore.patchRequest(runId, {
+    flightPreferences: request.flightPreferences,
+    hotelPreferences: request.hotelPreferences,
+  });
   void expandDiscoveryRun(runId, request.buckets, request.selectedCardIds);
 
   return { status: 202 as const, body: { runId, buckets: request.buckets } };
@@ -72,6 +76,61 @@ export function createApp() {
 
   app.get("/health", (_req, res) => {
     res.json({ ok: true, service: "api" });
+  });
+
+  app.get("/api/image-proxy", async (req, res) => {
+    const sourceUrl = z.string().url().safeParse(req.query.src);
+
+    if (!sourceUrl.success) {
+      res.status(400).json({ message: "Invalid image URL" });
+      return;
+    }
+
+    let parsedUrl: URL;
+
+    try {
+      parsedUrl = new URL(sourceUrl.data);
+    } catch {
+      res.status(400).json({ message: "Invalid image URL" });
+      return;
+    }
+
+    const hostname = parsedUrl.hostname.toLowerCase();
+    const isAllowedGoogleImage =
+      hostname === "maps.googleapis.com" ||
+      hostname === "places.googleapis.com" ||
+      hostname.endsWith(".googleusercontent.com");
+
+    if (!isAllowedGoogleImage) {
+      res.status(403).json({ message: "Image host not allowed" });
+      return;
+    }
+
+    try {
+      const response = await fetch(parsedUrl, {
+        headers: {
+          "user-agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15",
+          accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+          referer: config.PUBLIC_APP_URL,
+        },
+      });
+
+      if (!response.ok) {
+        res.status(response.status).end();
+        return;
+      }
+
+      const contentType = response.headers.get("content-type") ?? "image/jpeg";
+      const cacheControl = response.headers.get("cache-control") ?? "public, max-age=86400";
+      const arrayBuffer = await response.arrayBuffer();
+
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Cache-Control", cacheControl);
+      res.send(Buffer.from(arrayBuffer));
+    } catch {
+      res.status(502).json({ message: "Image fetch failed" });
+    }
   });
 
   app.post("/api/discover", async (req, res) => {
